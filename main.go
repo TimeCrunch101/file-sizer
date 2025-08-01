@@ -24,10 +24,11 @@ type FileEntry struct {
 
 // Result is the scan summary.
 type Result struct {
-	TotalFiles   int         `json:"total_files"`
-	TotalFolders int         `json:"total_folders"`
-	LongestPath  string      `json:"longest_path"`
-	LargeFiles   []FileEntry `json:"top_largest_files"`
+	TotalFiles        int         `json:"total_files"`
+	TotalFolders      int         `json:"total_folders"`
+	LongestPath       string      `json:"longest_path"`
+	LongestPathLength int         `json:"longest_path_length"`
+	LargeFiles        []FileEntry `json:"top_largest_files"`
 }
 
 type MinHeap []FileEntry
@@ -214,21 +215,25 @@ func main() {
 	var res Result
 	if !info.IsDir() {
 		res = Result{
-			TotalFiles:   1,
-			TotalFolders: 0,
-			LongestPath:  root,
+			TotalFiles:        1,
+			TotalFolders:      0,
+			LongestPath:       root,
+			LongestPathLength: len(root),
 			LargeFiles: []FileEntry{
 				{Size: info.Size(), Path: root},
 			},
 		}
+
 	} else {
 		tf, td, lp, largest := scan(root, *follow)
 		res = Result{
-			TotalFiles:   tf,
-			TotalFolders: td,
-			LongestPath:  lp,
-			LargeFiles:   largest,
+			TotalFiles:        tf,
+			TotalFolders:      td,
+			LongestPath:       lp,
+			LongestPathLength: len(lp),
+			LargeFiles:        largest,
 		}
+
 	}
 
 	// determine writer
